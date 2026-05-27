@@ -1,0 +1,64 @@
+﻿<Window x:Class="CybersecurityChatbot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cybersecurity KeepSafe" Height="600" Width="900"
+        Background="#1a1a2e">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER / ASCII ART -->
+        <Border Grid.Row="0" Background="#16213e" Padding="10">
+            <TextBlock FontFamily="Courier New" FontSize="11"
+                       Foreground="#00ff88" HorizontalAlignment="Center"
+                       Text="&#10;  ██████╗██╗   ██╗██████╗ ███████╗██████╗     ██████╗  ██████╗ ████████╗&#10; ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗    ██╔══██╗██╔═══██╗╚══██╔══╝&#10; ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝    ██████╔╝██║   ██║   ██║   &#10; ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗    ██╔══██╗██║   ██║   ██║   &#10; ╚██████╗   ██║   ██████╔╝███████╗██║  ██║    ██████╔╝╚██████╔╝   ██║   &#10;  ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═════╝  ╚═════╝    ╚═╝  &#10;"/>
+        </Border>
+
+        <!-- WELCOME BANNER -->
+        <Border Grid.Row="1" Background="#0f3460" Padding="8">
+            <TextBlock Text="🔒 Cybersecurity Awareness Bot — Stay Safe Online"
+                       Foreground="White" FontSize="14" FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+        </Border>
+
+        <!-- CHAT DISPLAY -->
+        <ScrollViewer Grid.Row="2" x:Name="ChatScroller"
+                      Margin="10" Background="#16213e"
+                      VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="ChatDisplay"
+                       FontFamily="Courier New" FontSize="13"
+                       Foreground="#e0e0e0" TextWrapping="Wrap"
+                       Padding="10"/>
+        </ScrollViewer>
+
+        <!-- INPUT AREA -->
+        <Border Grid.Row="3" Background="#16213e" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="UserInput"
+                         Grid.Column="0"
+                         Background="#0f3460" Foreground="White"
+                         CaretBrush="White" FontSize="13"
+                         Padding="8" Margin="0,0,8,0"
+                         KeyDown="UserInput_KeyDown"/>
+
+                <Button x:Name="SendButton"
+                        Grid.Column="1"
+                        Content="Send" Width="80"
+                        Background="#00ff88" Foreground="#1a1a2e"
+                        FontWeight="Bold" FontSize="13"
+                        Cursor="Hand"
+                        Click="SendButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
