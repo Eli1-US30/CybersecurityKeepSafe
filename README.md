@@ -44,7 +44,7 @@ CybersecurityChatbot/
 - System.Windows.Extensions NuGet package
 
 ## How To Run
-1. Clone the repository:
+1. Clone the repository:https://github.com/Eli1-US30/CybersecurityKeepSafe.git
 2. Open `CybersecurityChatbot.sln` in Visual Studio 2022
 3. Make sure `greetings.wav` is in the project folder and set to Copy Always
 4. Press `F5` to run
