@@ -37,7 +37,8 @@ namespace CybersecurityChatbot
                 _awaitingName = false;
                 return $"Nice to meet you, {_memory.GetName()}! I'm here to help you stay safe online.\n\n" +
                        $"You can ask me about:\n" +
-                       $"• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n\n" +
+                       $"• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n• Cloud\n• Privacy\n\n" +
+                       $"Please make sure that your spelling is right. The code is case sensitive\n" +
                        $"Type 'tell me more' to get more info on the last topic.";
             }
 
@@ -70,11 +71,15 @@ namespace CybersecurityChatbot
             if (lowerInput.Contains("how are you"))
                 return $"I'm running securely, thank you {_memory.GetName()}!";
 
+            if (lowerInput.Contains("thank you") || lowerInput.Contains("thanks"))
+                return $"You're welcome, {_memory.GetName()}!";
+
             if (lowerInput.Contains("what can you do") || lowerInput.Contains("purpose"))
                 return "I can help you learn about:\n• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n\nJust ask me about any of these topics!";
 
             // Step 6 — fallback
             string[] fallbacks = {
+            $"Please make sure the spelling is right, {_memory.GetName()}.",
             $"I'm not sure about that, {_memory.GetName()}. Try asking about passwords, phishing, viruses, VPNs or firewalls.",
             $"I didn't quite understand that, {_memory.GetName()}. Can you rephrase?",
             $"Hmm, I don't have info on that yet, {_memory.GetName()}. Try another cybersecurity topic!"

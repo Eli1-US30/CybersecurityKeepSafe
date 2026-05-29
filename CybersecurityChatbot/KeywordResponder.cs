@@ -42,7 +42,21 @@ namespace CybersecurityChatbot
             "Firewalls act as a barrier between your device and the internet.",
             "Both hardware and software firewalls are important for security.",
             "A firewall can block malicious traffic before it reaches your system."
-        }}
+        }},
+        { "cloud", new List<string> {
+            "Cloud storage stores your data on remote servers. Always use strong passwords to protect your accounts.",
+            "Be careful what you store in the cloud. Sensitive data should always be encrypted before uploading.",
+            "Use two-factor authentication on all your cloud accounts like Google Drive and OneDrive.",
+            "Check the privacy settings on your cloud storage regularly to control who can access your files.",
+            "Never share cloud storage links publicly as anyone with the link can access your files."
+        }},
+        { "privacy", new List<string> {
+            "Regularly review the privacy settings on all your social media accounts.",
+            "Never share personal information like your ID number or address online.",
+            "Use a private browser or incognito mode when using public computers.",
+            "Be careful what you post online — once it's there it can be very hard to remove.",
+            "Read privacy policies before signing up to new apps or websites."
+        }},
     };
 
             private Random _random = new Random();
