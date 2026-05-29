@@ -5,10 +5,10 @@ A WPF-based cybersecurity awareness chatbot that educates users on online safety
 through an interactive GUI interface.
 
 ## Author
-- **Name:** Your Name Here
-- **Student Number:** Your Student Number Here
-- **Course:** PROG6221 - Programming 2A
-- **Institution:** Your University Here
+- **Name: Eli Basson
+- **Student Number: ST10494408
+- **Course: PROG6221 - Programming 2A
+- **Institution: Rosebank College
 
 ## Features
 - Voice greeting on launch
