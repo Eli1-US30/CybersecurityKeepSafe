@@ -10,6 +10,12 @@ namespace CybersecurityChatbot
         private SentimentDetector _sentiment;
         private MemoryStore _memory;
         private bool _awaitingName = true;
+        private DatabaseHelper _db = new DatabaseHelper();
+        private bool _awaitingTaskTitle = false;
+        private bool _awaitingReminderChoice = false;
+        private string _pendingTaskTitle = "";
+        private QuizGame _quiz = new QuizGame();
+        private ActivityLogger _activityLog = new ActivityLogger();
 
         public ChatBot()
         {
@@ -26,7 +32,7 @@ namespace CybersecurityChatbot
         public string ProcessInput(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                return "Please type something!";
+                return "Please enter your name!";
 
             input = input.Trim();
 
@@ -39,10 +45,66 @@ namespace CybersecurityChatbot
                        $"You can ask me about:\n" +
                        $"• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n• Cloud\n• Privacy\n\n" +
                        $"Please make sure that your spelling is right. The code is case sensitive\n" +
-                       $"Type 'tell me more' to get more info on the last topic.";
+                       $"Type 'tell me more' to get more info on the last topic you asked about.";
             }
 
             string lowerInput = input.ToLower().Trim();
+
+            // Handle ongoing task conversation
+            if (_awaitingTaskTitle || _awaitingReminderChoice)
+                return HandleTaskFlow(input);
+
+            // Detect "add task" command - multiple phrasings
+            if (lowerInput.Contains("add task") || lowerInput.Contains("add a task") ||
+                lowerInput.Contains("new task") || lowerInput.Contains("create a task") ||
+                lowerInput.Contains("remind me"))
+            {
+                _awaitingTaskTitle = true;
+                return "Sure! What is the task title or description?";
+            }
+
+            // Detect "show tasks" command - multiple phrasings
+            if (lowerInput.Contains("show tasks") || lowerInput.Contains("view tasks") ||
+                lowerInput.Contains("my tasks") || lowerInput.Contains("what tasks") ||
+                lowerInput.Contains("list tasks") || lowerInput.Contains("what have you done"))
+            {
+                var tasks = _db.GetAllTasks();
+                if (tasks.Count == 0)
+                    return "You have no tasks yet!";
+
+                string result = "Here are your tasks:\n";
+                foreach (var t in tasks)
+                {
+                    string status = t.IsCompleted ? "[Done]" : "[Pending]";
+                    string reminder = t.ReminderDate.HasValue ? $" - Reminder: {t.ReminderDate.Value.ToShortDateString()}" : "";
+                    result += $"{status} #{t.TaskId}: {t.Title}{reminder}\n";
+                }
+                return result;
+            }
+
+            // If quiz is active, treat input as an answer
+            if (_quiz.IsActive)
+            {
+                string quizResponse = _quiz.SubmitAnswer(input);
+                if (!_quiz.IsActive) // quiz just finished
+                {
+                    _activityLog.LogAction($"Quiz completed - scored {_quiz.Score}/{_quiz.TotalQuestions}");
+                }
+                return quizResponse;
+            }
+
+            // Detect "start quiz" command
+            if (lowerInput.Contains("quiz") || lowerInput.Contains("start quiz"))
+            {
+                _activityLog.LogAction("Quiz started - 10 questions");
+                return _quiz.Start();
+            }
+
+            // Activity log - keep "what have you done" here only
+            if (lowerInput.Contains("activity log") || lowerInput.Contains("show log"))
+            {
+                return _activityLog.GetRecentLog();
+            }
 
             // Step 2 — check for follow up
             if (lowerInput.Contains("tell me more") || lowerInput.Contains("explain more"))
@@ -87,6 +149,38 @@ namespace CybersecurityChatbot
 
             Random random = new Random();
             return fallbacks[random.Next(fallbacks.Length)];
+        }
+        private string HandleTaskFlow(string input)
+        {
+            // Step A — waiting for the task title
+            if (_awaitingTaskTitle)
+            {
+                _pendingTaskTitle = input;
+                _awaitingTaskTitle = false;
+                _awaitingReminderChoice = true;
+                return $"Task added: '{_pendingTaskTitle}'. Would you like a reminder? (yes/no)";
+            }
+
+            // Step B — waiting for yes/no on reminder
+            if (_awaitingReminderChoice)
+            {
+                _awaitingReminderChoice = false;
+
+                if (input.ToLower().Contains("yes"))
+                {
+                    _db.AddTask(_pendingTaskTitle, _pendingTaskTitle, DateTime.Now.AddDays(7));
+                    _activityLog.LogAction($"Task added: '{_pendingTaskTitle}' (Reminder set for 7 days from now)");
+                    return "Got it! I'll remind you in 7 days.";
+                }
+                else
+                {
+                    _db.AddTask(_pendingTaskTitle, _pendingTaskTitle, null);
+                    _activityLog.LogAction($"Task added: '{_pendingTaskTitle}' (no reminder set)");
+                    return "Okay, no reminder set.";
+                }
+            }
+
+            return "";
         }
     }
 }
