@@ -78,6 +78,8 @@ namespace CybersecurityChatbot
             // Detect "show tasks" command - multiple phrasings
             if (lowerInput.Contains("show tasks") || lowerInput.Contains("view tasks") ||
                 lowerInput.Contains("my tasks") || lowerInput.Contains("what tasks") ||
+                lowerInput.Contains("show task") || lowerInput.Contains("view task") ||
+                lowerInput.Contains("my task") || lowerInput.Contains("what task") ||
                 lowerInput.Contains("list tasks") || lowerInput.Contains("what have i done"))
             {
                 var tasks = _db.GetAllTasks();
@@ -107,7 +109,8 @@ namespace CybersecurityChatbot
             }
 
             // Detect "complete task" command
-            if (lowerInput.Contains("complete task") || lowerInput.Contains("mark task") || lowerInput.Contains("finish task"))
+            if (lowerInput.Contains("complete task") || lowerInput.Contains("mark task") 
+                || lowerInput.Contains("finish task") || lowerInput.Contains("update task"))
             {
                 int id = ExtractTaskId(lowerInput);
                 if (id == -1)
