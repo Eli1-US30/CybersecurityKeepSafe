@@ -19,6 +19,26 @@ through an interactive GUI interface.
 - Follow-up phrases ("tell me more")
 - Memory system that remembers your name
 - Fallback responses for unrecognised input
+## Part 3 Features (New)
+- **Task Assistant** — Add cybersecurity-related tasks with optional reminders, stored in a MySQL database. View, complete, or delete tasks.
+- **Cybersecurity Quiz** — 10 multiple-choice/true-false questions with immediate feedback and a final score.
+- **NLP Simulation** — Recognizes varied phrasings for the same intent (e.g. "add a task", "remind me to...", "create a task").
+- **Activity Log** — Tracks recent bot actions (tasks added, quiz attempts) and displays them on request.
+
+  ## Database Setup
+1. Install MySQL Server and Workbench
+2. Create a schema named `cybersecurity_chatbot`
+3. Run this SQL to create the tasks table:
+```sql
+CREATE TABLE tasks (
+    TaskId INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    Description VARCHAR(500),
+    ReminderDate DATE NULL,
+    IsCompleted BOOLEAN DEFAULT FALSE
+);
+```
+4. Update the connection string in `DatabaseHelper.cs` with your MySQL root password
 
 ## Topics The Bot Can Help With
 - Passwords
@@ -57,3 +77,8 @@ CybersecurityChatbot/
    - `how are you` / `what can you do`
    - `tell me more` — get more info on the last topic
 4. Try typing how you feel e.g. `I am worried about phishing`
+## How To Use (Part 3 additions)
+- `add task` / `remind me to...` — add a new task
+- `show tasks` / `my tasks` — view all tasks
+- `quiz` / `start quiz` — begin the cybersecurity quiz
+- `activity log` / `show log` — view recent bot actions
