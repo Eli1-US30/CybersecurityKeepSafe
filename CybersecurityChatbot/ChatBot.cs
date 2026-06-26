@@ -55,6 +55,8 @@ namespace CybersecurityChatbot
                        $"You can ask me about:\n" +
                        $"• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n• Cloud\n• Privacy\n\n" +
                        $"Please make sure that your spelling is right. The code is case sensitive\n" +
+                       $"You can now set task you what to complete and have reminders\n" +
+                       $"There is a quiz game you can try to see how much you learned\n" +
                        $"Type 'tell me more' to get more info on the last topic you asked about.";
             }
 
@@ -76,7 +78,7 @@ namespace CybersecurityChatbot
             // Detect "show tasks" command - multiple phrasings
             if (lowerInput.Contains("show tasks") || lowerInput.Contains("view tasks") ||
                 lowerInput.Contains("my tasks") || lowerInput.Contains("what tasks") ||
-                lowerInput.Contains("list tasks") || lowerInput.Contains("what have you done"))
+                lowerInput.Contains("list tasks") || lowerInput.Contains("what have i done"))
             {
                 var tasks = _db.GetAllTasks();
                 if (tasks.Count == 0)
