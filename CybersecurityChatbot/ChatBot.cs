@@ -23,6 +23,16 @@ namespace CybersecurityChatbot
             _sentiment = new SentimentDetector();
             _memory = new MemoryStore();
         }
+        // Extracts the first integer found in the input string, returns -1 if none found
+        private int ExtractTaskId(string input)
+        {
+            foreach (string word in input.Split(' '))
+            {
+                if (int.TryParse(word, out int number))
+                    return number;
+            }
+            return -1;
+        }
 
         public string GetGreeting()
         {
@@ -36,7 +46,7 @@ namespace CybersecurityChatbot
 
             input = input.Trim();
 
-            // Step 1 — capture name first
+            // capture name first
             if (_awaitingName)
             {
                 _memory.SetName(input);
@@ -82,6 +92,30 @@ namespace CybersecurityChatbot
                 return result;
             }
 
+            // Detect "delete task" command
+            if (lowerInput.Contains("delete task") || lowerInput.Contains("remove task"))
+            {
+                int id = ExtractTaskId(lowerInput);
+                if (id == -1)
+                    return "Please specify the task number, e.g. 'delete task 3'.";
+
+                _db.DeleteTask(id);
+                _activityLog.LogAction($"Task #{id} deleted");
+                return $"Task #{id} has been deleted.";
+            }
+
+            // Detect "complete task" command
+            if (lowerInput.Contains("complete task") || lowerInput.Contains("mark task") || lowerInput.Contains("finish task"))
+            {
+                int id = ExtractTaskId(lowerInput);
+                if (id == -1)
+                    return "Please specify the task number, e.g. 'complete task 3'.";
+
+                _db.CompleteTask(id);
+                _activityLog.LogAction($"Task #{id} marked as completed");
+                return $"Task #{id} has been marked as completed!";
+            }
+
             // If quiz is active, treat input as an answer
             if (_quiz.IsActive)
             {
@@ -106,7 +140,7 @@ namespace CybersecurityChatbot
                 return _activityLog.GetRecentLog();
             }
 
-            // Step 2 — check for follow up
+            // check for follow up
             if (lowerInput.Contains("tell me more") || lowerInput.Contains("explain more"))
             {
                 string followUp = _keywords.GetFollowUp();
@@ -115,13 +149,13 @@ namespace CybersecurityChatbot
                 return "Please ask about a topic first!";
             }
 
-            // Step 3 — detect sentiment
+            // detect sentiment
             var sentiment = _sentiment.Detect(lowerInput);
             string opener = "";
             if (sentiment != SentimentDetector.Sentiment.Neutral)
                 opener = _sentiment.GetOpener(sentiment);
 
-            // Step 4 — check keywords
+            // check keywords
             string keywordResponse = _keywords.GetResponse(lowerInput);
             if (keywordResponse != "")
             {
@@ -129,7 +163,7 @@ namespace CybersecurityChatbot
                 return opener + keywordResponse;
             }
 
-            // Step 5 — special phrases
+            // special phrases
             if (lowerInput.Contains("how are you"))
                 return $"I'm running securely, thank you {_memory.GetName()}!";
 
@@ -139,7 +173,7 @@ namespace CybersecurityChatbot
             if (lowerInput.Contains("what can you do") || lowerInput.Contains("purpose"))
                 return "I can help you learn about:\n• Passwords\n• Phishing\n• Viruses\n• VPNs\n• Firewalls\n\nJust ask me about any of these topics!";
 
-            // Step 6 — fallback
+            // fallback
             string[] fallbacks = {
             $"Please make sure the spelling is right, {_memory.GetName()}.",
             $"I'm not sure about that, {_memory.GetName()}. Try asking about passwords, phishing, viruses, VPNs or firewalls.",
@@ -152,7 +186,7 @@ namespace CybersecurityChatbot
         }
         private string HandleTaskFlow(string input)
         {
-            // Step A — waiting for the task title
+            // waiting for the task title
             if (_awaitingTaskTitle)
             {
                 _pendingTaskTitle = input;
@@ -161,7 +195,7 @@ namespace CybersecurityChatbot
                 return $"Task added: '{_pendingTaskTitle}'. Would you like a reminder? (yes/no)";
             }
 
-            // Step B — waiting for yes/no on reminder
+            // waiting for yes/no on reminder
             if (_awaitingReminderChoice)
             {
                 _awaitingReminderChoice = false;
